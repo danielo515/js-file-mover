@@ -5,31 +5,8 @@ import chalk from "chalk";
 import path from "path";
 import commondir from "commondir";
 import jscodeshift from "jscodeshift";
-
-const jsExtensions = [".js", ".jsx", ".ts", ".tsx"];
-
-/**
- * Given a file path without extension
- * it determines the extension of the file by checking that the file exists
- * and returns the full path with the extension.
- * @param {string} filePath
- * @return {string}
- */
-function resolveExtension(filePath) {
-  const ext = path.extname(filePath);
-  if (jsExtensions.includes(ext)) {
-    return filePath + ext;
-  }
-
-  return jsExtensions
-    .map((ext) => filePath + ext) // add all extensions
-    .reduce((finalPath, current) => {
-      if (fs.pathExistsSync(current)) {
-        return current;
-      }
-      return finalPath;
-    });
-}
+import { logFileMove } from "./logFileMove.mjs";
+import { resolveExtension } from "./resolveFileExtension.mjs";
 
 /**
  * Reads the file and returns an array of relative import paths
@@ -56,12 +33,11 @@ function findRelativeImports(fileFullPath) {
   return importPaths.concat(importPaths.map(findRelativeImports)).flat();
 }
 
-function determineDestinationPathKeepingFolderStructure(
+function determineDestinationPathKeepingFolderStructure({
   destinationFolder,
-  fileFullPath
-) {
+  fileFullPath,
+}) {
   const commonPath = commondir([destinationFolder, fileFullPath]);
-  console.log(`commonPath`, commonPath);
   const destinationFile = path.join(
     destinationPath,
     fileFullPath.replace(commonPath, "./")
@@ -70,11 +46,20 @@ function determineDestinationPathKeepingFolderStructure(
   return destinationFile;
 }
 
-function logFileMove(source, destination) {
-  const commonPath = commondir([source, destination]);
-  const src = chalk.blue(source.replace(commonPath, "./"));
-  const dest = chalk.green(destination.replace(commonPath, "./"));
-  console.log(`${src} ${chalk.red("=>")} ${dest}`);
+function confirm() {
+  return new Promise((resolve) => {
+    process.stdout.write(`\n${chalk.bold.yellow("WARNING")}`);
+    process.stdout.write(`\n${chalk.bold.cyan("Move files?")} [Y/n] `);
+    process.stdin.resume();
+    process.stdin.setEncoding("utf8");
+    process.stdin.on("data", (data) => {
+      if (data.toLowerCase().trim() === "n") {
+        resolve(false);
+      } else {
+        resolve(true);
+      }
+    });
+  });
 }
 
 const destinationPath = path.join(process.cwd(), "./client/src/versions/uk/");
@@ -89,8 +74,30 @@ if (!fileArg) {
 const fileToMove = path.resolve(process.argv[2]);
 console.log("File to move", chalk.green(`${fileToMove}`));
 console.log(chalk.blue("Moving files"));
-[fileToMove, ...findRelativeImports(fileToMove)].forEach((file) => {
-  const newPath = determineDestinationPathKeepingFolderStructure(file);
-  logFileMove(file, newPath);
-  fs.moveSync(file, newPath);
-});
+const operations = [fileToMove, ...findRelativeImports(fileToMove)].map(
+  (file) => {
+    const newPath = determineDestinationPathKeepingFolderStructure({
+      destinationFolder: destinationPath,
+      fileFullPath: file,
+    });
+    logFileMove(file, newPath);
+    return [file, newPath];
+  }
+);
+
+confirm()
+  .then((doIt) => {
+    if (!doIt) {
+      return console.log(chalk.red("Operation cancelled"));
+    }
+    return operations.forEach(([file, newPath]) => {
+      fs.moveSync(file, newPath);
+    });
+  })
+  .then(() => {
+    process.exit(0);
+  })
+  .catch((err) => {
+    console.error(err);
+    process.exit(1);
+  });
