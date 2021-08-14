@@ -1,3 +1,4 @@
+import chalk from "chalk";
 import commondir from "commondir";
 
 export function logFileMove(source, destination) {

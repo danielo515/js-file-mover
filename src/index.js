@@ -5,8 +5,9 @@ import chalk from "chalk";
 import path from "path";
 import commondir from "commondir";
 import jscodeshift from "jscodeshift";
-import { logFileMove } from "./logFileMove.mjs";
-import { resolveExtension } from "./resolveFileExtension.mjs";
+import { logFileMove } from "./logFileMove.js";
+import { resolveExtension } from "./resolveFileExtension.js";
+import { confirm } from "./confirm.js";
 
 /**
  * Reads the file and returns an array of relative import paths
@@ -44,22 +45,6 @@ function determineDestinationPathKeepingFolderStructure({
   );
 
   return destinationFile;
-}
-
-function confirm() {
-  return new Promise((resolve) => {
-    process.stdout.write(`\n${chalk.bold.yellow("WARNING")}`);
-    process.stdout.write(`\n${chalk.bold.cyan("Move files?")} [Y/n] `);
-    process.stdin.resume();
-    process.stdin.setEncoding("utf8");
-    process.stdin.on("data", (data) => {
-      if (data.toLowerCase().trim() === "n") {
-        resolve(false);
-      } else {
-        resolve(true);
-      }
-    });
-  });
 }
 
 const destinationPath = path.join(process.cwd(), "./client/src/versions/uk/");
