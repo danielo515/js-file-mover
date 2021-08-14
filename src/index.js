@@ -3,7 +3,7 @@
 import fs from "fs-extra";
 import chalk from "chalk";
 import path from "path";
-import { determineDestinationPathKeepingFolderStructure } from "./determineDestinationPath";
+import { determineDestinationPathKeepingFolderStructure } from "./determineDestinationPath.js";
 import { logFileMove } from "./logFileMove.js";
 import { findRelativeImports } from "./findRelativeImports.js";
 import { confirm } from "./confirm.js";
