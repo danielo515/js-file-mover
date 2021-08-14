@@ -3,23 +3,10 @@
 import fs from "fs-extra";
 import chalk from "chalk";
 import path from "path";
-import commondir from "commondir";
+import { determineDestinationPathKeepingFolderStructure } from "./determineDestinationPath";
 import { logFileMove } from "./logFileMove.js";
 import { findRelativeImports } from "./findRelativeImports.js";
 import { confirm } from "./confirm.js";
-
-function determineDestinationPathKeepingFolderStructure({
-  destinationFolder,
-  fileFullPath,
-}) {
-  const commonPath = commondir([destinationFolder, fileFullPath]);
-  const destinationFile = path.join(
-    destinationPath,
-    fileFullPath.replace(commonPath, "./")
-  );
-
-  return destinationFile;
-}
 
 const destinationPath = path.join(process.cwd(), "./client/src/versions/uk/");
 

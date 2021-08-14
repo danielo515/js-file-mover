@@ -31,5 +31,7 @@ export function findRelativeImports(fileFullPath) {
     return [];
   }
 
+  console.log(`importPaths`, importPaths);
+
   return importPaths.concat(importPaths.map(findRelativeImports)).flat();
 }
