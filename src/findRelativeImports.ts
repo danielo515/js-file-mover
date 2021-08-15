@@ -10,11 +10,12 @@ function isStyleFile(filePath: string) {
   return [".scss", ".sass"].includes(path.extname(filePath));
 }
 
+const concat = (a: string[], b: string[]) => a.concat(b);
+
 function _findRelativeImports(
   fileFullPath: string,
   accPaths: string[]
 ): string[] {
-  console.log({ fileFullPath, accPaths });
   const parentPath = path.dirname(fileFullPath);
   if (isStyleFile(fileFullPath)) return accPaths; // skip import lookup on style files
   const sourceCode = fs.readFileSync(fileFullPath, "utf8");
@@ -30,14 +31,12 @@ function _findRelativeImports(
     .map(({ value }) => value.source.value)
     .map((importPath) => path.join(parentPath, importPath))
     .map(resolveExtension)
-    .flat()
+    .reduce(concat, [])
     .filter((importPath) => !accPaths.includes(importPath)); //avoid circular imports
 
   if (importPaths.length === 0) {
     return accPaths;
   }
-
-  console.log({ importPaths });
 
   const result = importPaths.reduce((acc, importPath) => {
     return acc.concat(
