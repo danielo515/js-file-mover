@@ -30,6 +30,7 @@ function _findRelativeImports(
     .map(({ value }) => value.source.value)
     .map((importPath) => path.join(parentPath, importPath))
     .map(resolveExtension)
+    .flat()
     .filter((importPath) => !accPaths.includes(importPath)); //avoid circular imports
 
   if (importPaths.length === 0) {
@@ -38,16 +39,13 @@ function _findRelativeImports(
 
   console.log({ importPaths });
 
-  const result = importPaths
-    .map((importPath, i) => {
-      return _findRelativeImports(
-        importPath,
-        accPaths.concat(importPaths.slice(i + 1))
-      );
-    })
-    .flat();
+  const result = importPaths.reduce((acc, importPath) => {
+    return acc.concat(
+      _findRelativeImports(importPath, accPaths.concat(importPaths))
+    );
+  }, []);
 
-  return result;
+  return Array.from(new Set(result));
 }
 
 /**

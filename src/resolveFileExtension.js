@@ -4,24 +4,19 @@ import path from "path";
 const jsExtensions = [".js", ".jsx", ".ts", ".tsx", ".scss"];
 
 /**
- * Given a file path without extension
+ * Given a file path (potentially) without extension
  * it determines the extension of the file by checking that the file exists
  * and returns the full path with the extension.
  * @param {string} filePath the full path to the file
- * @return {string}
+ * @return {string[]}
  */
 export function resolveExtension(filePath) {
-  const ext = path.extname(filePath);
-  if (jsExtensions.includes(ext)) {
-    return filePath + ext;
-  }
-
-  return jsExtensions
-    .map((ext) => filePath + ext) // add all extensions
-    .reduce((finalPath, current) => {
-      if (fs.pathExistsSync(current)) {
-        return current;
-      }
-      return finalPath;
-    });
+  const dirname = path.dirname(filePath);
+  const allFiles = fs.readdirSync(dirname);
+  return allFiles.reduce((acc, file) => {
+    if (jsExtensions.includes(path.extname(file))) {
+      acc.push(path.join(dirname, file));
+    }
+    return acc;
+  }, []);
 }
