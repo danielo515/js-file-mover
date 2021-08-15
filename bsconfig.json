@@ -16,5 +16,6 @@
     "language": "typescript",
     "generatedFileExtension": ".gen.ts"
   },
+  "suffix": ".bs.js",
   "bs-dependencies": []
 }
