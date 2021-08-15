@@ -36,9 +36,14 @@ function _findRelativeImports(
     return accPaths;
   }
 
+  console.log({ importPaths });
+
   const result = importPaths
-    .map((importPath) => {
-      return _findRelativeImports(importPath, accPaths.concat(importPaths));
+    .map((importPath, i) => {
+      return _findRelativeImports(
+        importPath,
+        accPaths.concat(importPaths.slice(i + 1))
+      );
     })
     .flat();
 
