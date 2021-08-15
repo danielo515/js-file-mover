@@ -26,6 +26,7 @@
     "jscodeshift": "^0.13.0"
   },
   "devDependencies": {
+    "@types/jscodeshift": "^0.11.2",
     "esbuild": "^0.12.20"
   }
 }
