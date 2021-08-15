@@ -2,11 +2,11 @@
 
 import fs from "fs-extra";
 import chalk from "chalk";
-import { determineDestinationPathKeepingFolderStructure } from "./determineDestinationPath.js";
-import { logFileMove } from "./logFileMove.js";
-import { findRelativeImports } from "./findRelativeImports.js";
-import { confirm } from "./confirm.js";
+import { determineDestinationPathKeepingFolderStructure } from "./determineDestinationPath";
+import { logFileMove } from "./logFileMove";
+import { confirm } from "./confirm";
 import { getArguments } from "./arguments";
+import { findRelativeImports } from "./findRelativeImports";
 
 const { fileToMove, destinationPath } = getArguments();
 
