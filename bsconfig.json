@@ -12,6 +12,9 @@
       "in-source": true
     }
   ],
-  "suffix": ".bs.js",
+  "gentypeconfig": {
+    "language": "typescript",
+    "generatedFileExtension": ".gen.ts"
+  },
   "bs-dependencies": []
 }
