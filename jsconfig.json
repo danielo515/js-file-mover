@@ -3,7 +3,8 @@
     "module": "es2015",
     "moduleResolution": "node",
     "checkJs": true,
-    "target": "es6"
+    "target": "es6",
+    "resolveJsonModule": true
   },
   "exclude": ["node_modules", "**/node_modules/*"]
 }

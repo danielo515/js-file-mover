@@ -5,6 +5,10 @@ import fs from "fs-extra";
 
 const hasSource = ({ source }) =>
   source?.value.startsWith("./") || source?.value.startsWith("../");
+
+function isStyleFile(filePath) {
+  return [".scss", ".sass"].includes(path.extname(filePath));
+}
 /**
  * Reads the file and returns an array of relative import paths
  * with the full path to each file already resolved.
@@ -13,6 +17,7 @@ const hasSource = ({ source }) =>
  */
 export function findRelativeImports(fileFullPath) {
   const parentPath = path.dirname(fileFullPath);
+  if (isStyleFile(fileFullPath)) return []; // skip import lookup on style files
   const sourceCode = fs.readFileSync(fileFullPath, "utf8");
   const ast = jscodeshift.withParser("tsx")(sourceCode);
   const paths = ast.find(jscodeshift.ImportDeclaration, hasSource);
@@ -30,8 +35,6 @@ export function findRelativeImports(fileFullPath) {
   if (importPaths.length === 0) {
     return [];
   }
-
-  console.log(`importPaths`, importPaths);
 
   return importPaths.concat(importPaths.map(findRelativeImports)).flat();
 }
