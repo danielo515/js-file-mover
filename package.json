@@ -11,9 +11,12 @@
   ],
   "scripts": {
     "build": "esbuild ./src/index.js --bundle --platform=node --target=node12 --outfile=dist/index.js",
-    "start": "yarn build --watch",
+    "build:watch": "yarn build --watch",
     "prepublish": "yarn build",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "re:build": "rescript",
+    "re:start": "rescript build -w",
+    "start": "concurrently npm:build:watch npm:re:start"
   },
   "keywords": [],
   "author": "Danielo Rodríguez",
@@ -26,7 +29,9 @@
     "jscodeshift": "^0.13.0"
   },
   "devDependencies": {
+    "rescript": "^9.1.2",
     "@types/jscodeshift": "^0.11.2",
+    "concurrently": "^6.2.1",
     "esbuild": "^0.12.20"
   }
 }
