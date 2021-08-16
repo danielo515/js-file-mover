@@ -3,7 +3,9 @@
 import * as Path from "path";
 import * as Commondir from "commondir";
 
-function determineDestinationPathKeepingFolderStructure(destinationFolder, fileFullPath) {
+function determineDestinationPathKeepingFolderStructure(options) {
+  var destinationFolder = options.destinationFolder;
+  var fileFullPath = options.fileFullPath;
   var commonPath = Commondir([
         destinationFolder,
         fileFullPath
