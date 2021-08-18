@@ -10,7 +10,7 @@ let getArguments = () => {
   let program = command()->version("0.0.1")->parse(Node_process.argv)
 
   let options = program->opts
-  let fileArg = program.args[0]
+  let fileArg = program.args->Js.Array2.unsafe_get(0)
   let fileToMove = switch fileArg {
   | Some(path) => resolve(path)
   | _ => {

@@ -5,7 +5,7 @@ import chalk from "chalk";
 import { determineDestinationPathKeepingFolderStructure } from "./determineDestinationPath";
 import { logFileMove } from "./logFileMove";
 import { confirm } from "./confirm";
-import { getArguments } from "./arguments";
+import { getArguments } from "./arguments.bs";
 import { findRelativeImports } from "./findRelativeImports";
 
 const { fileToMove, destinationPath } = getArguments();
